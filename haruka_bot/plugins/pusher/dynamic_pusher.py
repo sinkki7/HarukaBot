@@ -18,6 +18,7 @@ from ...config import plugin_config
 from ...database import DB as db
 from ...database import dynamic_offset as offset
 from ...utils import get_dynamic_screenshot, safe_send, scheduler
+from ...utils.dynamic_render import get_dynamic_pic
 
 
 async def dy_sched():
@@ -71,7 +72,11 @@ async def dy_sched():
         if dynamic_id > offset[uid]:
             logger.info(f"检测到新动态（{dynamic_id}）：{name}（{uid}）")
             url = f"https://t.bilibili.com/{dynamic_id}"
-            image = await get_dynamic_screenshot(dynamic_id)
+            # 动态图片获取
+            if plugin_config.use_dynamic_render:
+                image = await get_dynamic_pic(dynamic_id)
+            else:
+                image = await get_dynamic_screenshot(dynamic_id)
             if image is None:
                 logger.debug(f"动态不存在，已跳过：{url}")
                 return
