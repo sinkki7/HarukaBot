@@ -82,6 +82,7 @@ async def dy_sched():
                 return
             elif dynamic.card_type == DynamicType.live_rcmd:
                 logger.debug(f"直播推荐动态，已跳过：{url}")
+                offset[uid] = dynamic_id
                 return
 
             type_msg = {
