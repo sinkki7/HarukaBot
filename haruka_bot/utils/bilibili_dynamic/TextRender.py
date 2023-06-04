@@ -143,7 +143,9 @@ class MainTextRender:
             container.paste(self.content_img, (int((container.size[0] - self.content_img.size[0]) / 2), 0))
             return container
         else:
-            if self.dynamic.display and self.dynamic.display.origin and self.dynamic.display.origin.topic_info.new_topic:
+            if self.dynamic.display and self.dynamic.display.origin \
+                    and self.dynamic.display.origin.topic_info \
+                    and self.dynamic.display.origin.topic_info.new_topic:
                 description = ""
                 result = await self.get_origin_particular_text(description=description)
                 description = result["content"]
