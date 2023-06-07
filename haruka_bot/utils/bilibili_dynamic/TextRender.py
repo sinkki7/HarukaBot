@@ -70,7 +70,7 @@ class MainTextRender:
 
             return container
         else:
-            if self.dynamic.display and self.dynamic.display.topic_info.new_topic:
+            if self.dynamic.display and self.dynamic.display.topic_info and self.dynamic.display.topic_info.new_topic:
                 description = ""
                 result = await self.get_particular_text(description=description)
                 description = result["content"]
