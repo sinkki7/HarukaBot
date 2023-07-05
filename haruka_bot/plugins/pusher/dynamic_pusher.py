@@ -44,7 +44,7 @@ async def dy_sched():
         ).list
     except AioRpcError as e:
         if e.code() == StatusCode.DEADLINE_EXCEEDED:
-            logger.error("爬取动态超时，将在下个轮询中重试")
+            logger.error(f"爬取动态超时，将在下个轮询中重试：{e.code()} {e.details()}")
             return
         raise
 
@@ -71,17 +71,23 @@ async def dy_sched():
         dynamic_id = int(dynamic.extend.dyn_id_str)
         if dynamic_id > offset[uid]:
             logger.info(f"检测到新动态（{dynamic_id}）：{name}（{uid}）")
+            err = None
             url = f"https://t.bilibili.com/{dynamic_id}"
             # 动态图片获取
             if plugin_config.use_dynamic_render:
                 image = await get_dynamic_pic(dynamic_id)
             else:
-                image = await get_dynamic_screenshot(dynamic_id)
+                image, err = await get_dynamic_screenshot(dynamic_id)
             if image is None:
                 logger.debug(f"动态不存在，已跳过：{url}")
                 return
-            elif dynamic.card_type == DynamicType.live_rcmd:
-                logger.debug(f"直播推荐动态，已跳过：{url}")
+            elif dynamic.card_type in [
+                DynamicType.live_rcmd,
+                DynamicType.live,
+                DynamicType.ad,
+                DynamicType.banner,
+            ]:
+                logger.debug(f"无需推送的动态 {dynamic.card_type}，已跳过：{url}")
                 offset[uid] = dynamic_id
                 return
 
@@ -96,8 +102,8 @@ async def dy_sched():
             }
             message = (
                 f"{name} {type_msg.get(dynamic.card_type, type_msg[0])}：\n"
-                + MessageSegment.image(image)
-                + f"\n{url}"
+                f"{f'动态图片可能截图异常：{err}' if err else ''}\n"
+                f"{MessageSegment.image(image)}\n{url}"
             )
 
             push_list = await db.get_push_list(uid, "dynamic")
@@ -129,10 +135,7 @@ def dynamic_lisener(event):
 if plugin_config.haruka_dynamic_interval == 0:
     scheduler.add_listener(
         dynamic_lisener,
-        EVENT_JOB_EXECUTED
-        | EVENT_JOB_ERROR
-        | EVENT_JOB_MISSED
-        | EVENT_SCHEDULER_STARTED,
+        EVENT_JOB_EXECUTED | EVENT_JOB_ERROR | EVENT_JOB_MISSED | EVENT_SCHEDULER_STARTED,
     )
 else:
     scheduler.add_job(
