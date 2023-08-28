@@ -20,7 +20,6 @@ dependencies = [
     "packaging>=23.1",
     "nonebot-plugin-guild-patch>=0.2.3",
     "msvc-runtime>=14.34.31931; sys_platform == \"win32\"",
-    "Pillow>=9.5.0",
     "qrcode>=7.4.2",
     "emoji>=2.2.0",
     "fonttools>=4.39.3",
@@ -28,6 +27,7 @@ dependencies = [
     "capsolver>=1.0.5",
     "PyExecJS>=1.5.1",
     "pycryptodome>=3.18.0",
+    "Pillow==9.5.0",
 ]
 dynamic = ["version"]
 name = "haruka-bot"

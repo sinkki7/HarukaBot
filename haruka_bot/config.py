@@ -15,11 +15,16 @@ class Config(BaseSettings):
     haruka_proxy: Optional[str] = None
     haruka_interval: int = 10
     haruka_live_interval: int = haruka_interval
-    haruka_dynamic_interval: int = 0
+    haruka_dynamic_interval: int = 2
     haruka_dynamic_at: bool = False
     haruka_screenshot_style: str = "mobile"
     haruka_captcha_address: str = "https://captcha-cd.ngworks.cn"
-    haruka_browser_ua: Optional[str] = None
+    haruka_browser_ua: Optional[str] = (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+        " AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88"
+        " Safari/537.36 Edg/87.0.664.60"
+    )
+    haruka_browser_cookie: Optional[str] = "buvid3=4A075D68-5D0B-D876-D88E-7D90DB4F1AF177842infoc;"
     haruka_dynamic_timeout: int = 30
     haruka_dynamic_font_source: str = "system"
     haruka_dynamic_font: Optional[str] = "Noto Sans CJK SC"
